@@ -1,25 +1,32 @@
 import { useState } from "react";
 import axios from "axios";
 import { useDispatch } from "react-redux";
-import { addUser } from "./utils/userSlice";
+import { addUser } from "../utils/userSlice";
+import { useNavigate } from "react-router";
+import { BASE_URL } from "../utils/constants";
 
 const Login = () => {
   const [emailId, setEmailId] = useState("");
   const [password, setpswrd] = useState("");
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   // we are making a API and it will return a promise thats why we are
   // making the function async and await.
-  //LOGIN API CALL 
+  //LOGIN API CALL
   const handleLogin = async () => {
     try {
-      const res = await axios.post("http://localhost:3000/login", {
-        emailId,
-        password,
-      },{withCredentials:true}); // make sure token will be saved in the cookies.
+      const res = await axios.post(
+        BASE_URL + "/login",
+        {
+          emailId,
+          password,
+        },
+        { withCredentials: true }
+      ); // make sure token will be saved in the cookies.
 
-     dispatch(addUser(res.data));
-     
+      dispatch(addUser(res.data));
+      return navigate("/");
     } catch (error) {
       console.error(error);
     }
@@ -53,7 +60,9 @@ const Login = () => {
             </fieldset>
           </div>
           <div className="card-actions justify-center">
-            <button className="btn btn-primary" onClick={handleLogin}>Login</button>
+            <button className="btn btn-primary" onClick={handleLogin}>
+              Login
+            </button>
           </div>
         </div>
       </div>

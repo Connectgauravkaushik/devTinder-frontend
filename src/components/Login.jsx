@@ -6,9 +6,12 @@ import { useNavigate } from "react-router";
 import { BASE_URL } from "../utils/constants";
 
 const Login = () => {
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [emailId, setEmailId] = useState("");
   const [password, setpswrd] = useState("");
-  const  [error , setError] = useState();
+  const [error, setError] = useState();
+  const [isLoginForm, setIsLoginForm] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -33,12 +36,54 @@ const Login = () => {
     }
   };
 
+  const handleSignUp = async () => {
+    try {
+      const res = await axios.post(
+        BASE_URL + "/signup",
+        { firstName, lastName, emailId, password },
+        { withCredentials: true }
+      );
+      dispatch(addUser(res?.data?.data));
+
+      return navigate("/profile");
+    } catch (error) {
+      setError(error?.response?.data || "invalid credentials ");
+    }
+  };
+
   return (
     <div className="flex justify-center items-center my-10">
       <div className="card bg-base-300 w-96 shadow-sm">
         <div className="card-body">
-          <h2 className="card-title justify-center">Login</h2>
+          <h2 className="card-title justify-center">
+            {" "}
+            {isLoginForm ? "Login" : "SignUp"}
+          </h2>
           <div className="">
+            {/* First Name field */}
+            {!isLoginForm && (
+              <>
+                <fieldset className="fieldset my-4">
+                  <legend className="fieldset-legend">First Name</legend>
+                  <input
+                    type="text"
+                    className="input"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)} // Binding the state variable with input variable.
+                  />
+                </fieldset>
+
+                <fieldset className="fieldset my-4">
+                  <legend className="fieldset-legend">Last Name</legend>
+                  <input
+                    type="text"
+                    className="input"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)} // Binding the state variable with input variable.
+                  />
+                </fieldset>
+              </>
+            )}
             {/* Email field */}
             <fieldset className="fieldset my-4">
               <legend className="fieldset-legend">Email ID </legend>
@@ -62,10 +107,21 @@ const Login = () => {
           </div>
           <p className="text-red-500">{error}</p>
           <div className="card-actions justify-center">
-            <button className="btn btn-primary" onClick={handleLogin}>
-              Login
+            <button
+              className="btn btn-primary"
+              onClick={isLoginForm ? handleLogin : handleSignUp}
+            >
+              {isLoginForm ? "Login" : "SignUp"}
             </button>
           </div>
+          <p
+            onClick={() => setIsLoginForm((value) => !value)}
+            className="text-white cursor-pointer text-center hover:text-blue-500"
+          >
+            {isLoginForm
+              ? "New User ? SignUp Here"
+              : "Existing User ? Login Here"}
+          </p>
         </div>
       </div>
     </div>

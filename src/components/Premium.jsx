@@ -1,9 +1,12 @@
 import axios from "axios";
 import { BASE_URL } from "../utils/constants";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const Premium = () => {
   const [isUserPremium, setIsUserPremium] = useState();
+  useEffect(()=>{
+    verifyPreimiumUser()
+  },[]);
 
   const verifyPreimiumUser = async () => {
     const res = await axios.get(BASE_URL + "/premium/verify", {
@@ -13,6 +16,7 @@ const Premium = () => {
     if (res.data.isPremium) {
       setIsUserPremium(true);
     }
+
   };
 
   const handleBuyClick = async (type) => {
@@ -45,6 +49,8 @@ const Premium = () => {
     const rzp = new window.Razorpay(options);
     rzp.open();
   };
+
+
 
   return isUserPremium ? (
     <div>you are already a premium user</div>
